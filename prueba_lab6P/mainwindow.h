@@ -6,8 +6,10 @@
 #include <QGraphicsItem>
 #include <QFile>
 #include "planetas.h"
-#include <QtMath>
+//#include <QtMath>
+#include <cmath>
 #include <QDebug>
+#include <QList>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -36,7 +38,8 @@ private:
     planetas * sol;
     planetas * tierra;
     planetas * sistema[3];
-    int v_limit=500;
-    int h_limit=500;
+    float v_limit=500;
+    float h_limit=500;
+    QList<planetas*> sistema2;
 };
 #endif // MAINWINDOW_H

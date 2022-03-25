@@ -8,13 +8,49 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    h_limit=250;
-    v_limit=250;
-    scene = new QGraphicsScene(this);
-    scene->setSceneRect(0,0,h_limit*2,v_limit*2);
-    ui->graphicsView->setScene(scene);
-    scene->addRect(scene->sceneRect());
+    //Cargar desde un archivo
+    QString info;
+    QFile file("C:/Users/Angel/OneDrive/Documentos/C++/Laboratorio_4/prueba_lab6P/archivos/cargar.txt");
+    file.open(QIODevice::ReadOnly);
+    info= file.readLine();
+    QList<QString> dats;
+    int n=0;
+    while(n>=0){
+        n=info.indexOf(" ");
+        if(n!=0){
+            dats.append(info.left(n));
+        }
+        info=info.remove(0,n+1);
+    }
+    for(int i=0;i<dats.size();i++){
+        qDebug()<<dats.at(i);
+    }
 
+    n=0;
+    h_limit=dats.at(n++).toFloat();
+    v_limit=dats.at(n++).toFloat();
+    while(n<dats.size()){
+        if(dats.at(n)=="E"){
+            sistema2.append(new planetas(dats.at(++n).toFloat(),dats.at(++n).toFloat(),dats.at(++n).toFloat(),dats.at(++n).toFloat(),dats.at(++n).toFloat(),dats.at(++n).toFloat(),2));
+        }
+        n++;
+    }
+
+    scene = new QGraphicsScene(this);
+    scene->setSceneRect(-h_limit/2,-v_limit/2,h_limit,v_limit);
+    ui->graphicsView->setScene(scene);
+   // scene->addRect(scene->sceneRect());
+    for(int i=0;i<sistema2.size();i++){
+        qDebug()<<sistema2.at(i)->getplaneta()->getPx();
+        qDebug()<<sistema2.at(i)->getplaneta()->getPy();
+        qDebug()<<sistema2.at(i)->getplaneta()->getVx();
+        qDebug()<<sistema2.at(i)->getplaneta()->getVy();
+        qDebug()<<sistema2.at(i)->getplaneta()->getVy();
+        qDebug()<<sistema2.at(i)->getplaneta()->getMasa();
+        qDebug()<<sistema2.at(i)->getplaneta()->getRad();
+        sistema2.at(i)->pos(v_limit);
+        scene->addItem(sistema2.at(i));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -37,29 +73,30 @@ void MainWindow::aceleraciones()
     tierra->getplaneta()->setAx(ax1);
     tierra->getplaneta()->setAy(ay1);
     qDebug()<<tetha*180/3.1415<<" "<<num/den<<" "<<ax1<<" "<<ay1<<" "<<tierra->getplaneta()->getPx()<<" "<<tierra->getplaneta()->getPy();*/
-    double axt=0;
-    double ayt=0;
+    float axt=0;
+    float ayt=0;
     double ap=0;
     double a=0;
     double b=0;
     double r=0;
     float tetha=0;
-    static double cont=0;
-    for(int i=1;i<3;i++){
+    //static double cont=0;
+    for(int i=0;i<sistema2.size();i++){
         for(int j=0;j<3;j++){
             if(i!=j){
-                a=sistema[j]->getplaneta()->getPy()-sistema[i]->getplaneta()->getPy();
-                b=sistema[j]->getplaneta()->getPx()-sistema[i]->getplaneta()->getPx();
-                tetha=atan(a/b);
-                r=sqrt(a*a+b*b);
-                ap=(G*sistema[j]->getplaneta()->getMasa())/(r*r);
-                axt=axt+ap*cos(tetha);
-                ayt=ayt+ap*sin(tetha);
-                qDebug()<<cont++;
+                a=sistema2.at(i)->getplaneta()->getPy()-sistema2.at(j)->getplaneta()->getPy();
+                b=sistema2.at(i)->getplaneta()->getPx()-sistema2.at(j)->getplaneta()->getPx();
+                tetha=atan2(a,b);
+                r=(a*a)+(b*b);
+                ap=(1*sistema2.at(j)->getplaneta()->getMasa())/(r);
+                axt=axt+(ap*cos(tetha));
+                ayt=ayt+(ap*sin(tetha));
+
             }
         }
-        sistema[i]->getplaneta()->setAx(axt);
-        sistema[i]->getplaneta()->setAy(ayt);
+        sistema2.at(i)->getplaneta()->setAx(axt);
+        sistema2.at(i)->getplaneta()->setAy(ayt);
+        qDebug()<<axt<<" "<<ayt;
         axt=0;
         ayt=0;
     }
@@ -82,31 +119,30 @@ void MainWindow::on_startButton_clicked()
 //    tierra->pos(v_limit);
 
     sistema[0]=new planetas(0,0,0,0,20,70000,2);
-    scene->addItem(sistema[0]);
-    sistema[0]->pos(v_limit);
+//    scene->addItem(sistema[0]);
+//    sistema[0]->pos(v_limit);
 
-    sistema[1]=new planetas(8000/28,1000/28,2,0,5,70,2);
-    scene->addItem(sistema[1]);
-    sistema[1]->pos(v_limit);
+    sistema[1]=new planetas(0,-7000,2,0,50,70,2);
+    //scene->addItem(sistema[1]);
+    //sistema[1]->pos(v_limit);
 
-    sistema[2]=new planetas(12000/28,13000/28,-1.6,1.2,10,25,2);
-    scene->addItem(sistema[2]);
-    sistema[2]->pos(v_limit);
-
+    sistema[2]=new planetas(4000,5000,-1.6,1.2,60,25,2);
+//    scene->addItem(sistema[2]);
+//    sistema[2]->pos(v_limit);
 
     time=new QTimer();
-    time->stop();
+    //time->stop();
     connect(time,SIGNAL(timeout()),this,SLOT(actualizar()));
-    time->start(100);
+    time->start(1);
 
 }
 
 void MainWindow::actualizar(){
-    //aceleraciones();
+    aceleraciones();
     //ui->graphicsView->scale(0.99,0.99);
     //tierra->actualizar(v_limit);
-    for(int i=1;i<3;i++){
-        sistema[i]->actualizar(v_limit);
+    for(int i=0;i<sistema2.size();i++){
+        sistema2.at(i)->actualizar(v_limit);
         //qDebug()<<sistema[i]->getplaneta()->getPx()<<" "<<sistema[i]->getplaneta()->getPy();
     }
 }

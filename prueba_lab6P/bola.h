@@ -1,6 +1,7 @@
 #ifndef BOLA_H
 #define BOLA_H
-#define G 0000000000667
+#define G 0.000000000667
+//#define G 1
 //0.67384x10−11
 
 class bola

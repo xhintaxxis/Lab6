@@ -19,7 +19,7 @@ void planetas::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 void planetas::pos(int v_lim)
 {
-    setPos(planeta->getPx(),v_lim-(planeta->getPy()));
+    setPos(planeta->getPx()/28,(planeta->getPy()/28));
 }
 
 void planetas::actualizar(int v_lim)

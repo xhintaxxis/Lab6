@@ -3,7 +3,7 @@
 #include "bola.h"
 #include <QPainter>
 #include <QGraphicsItem>
-#define DT 0.01
+#define DT 1
 class planetas: public QGraphicsItem
 {
 public:

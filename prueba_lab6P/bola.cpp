@@ -21,7 +21,7 @@ void bola::setPx(float newPx)
 
 float bola::getPy() const
 {
-    return py;
+    return -py;
 }
 
 void bola::setPy(float newPy)
@@ -76,15 +76,17 @@ float bola::getRad() const
 
 void bola::mover(float dt)
 {
+
 //    vx = vx+(ax*dt);
 //    vy = vy+(ay*dt);
 //    px += vx*dt;
 //    py += vy*dt;
 
-    px += vx*dt+0.5*dt*dt*ax;
-    py += vy*dt+0.5*dt*dt*ay;
+    px += vx*dt+(dt*dt*ax)/2;
+    py += vy*dt+(dt*dt*ay)/2;
     vx = vx+(ax*dt);
     vy = vy+(ay*dt);
+    ax=ay=0;
 }
 
 float bola::getMasa() const
